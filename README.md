@@ -1,5 +1,5 @@
 # Project 1 Summary and Requirements
-Build a fullstack application using Spring Boot & React. Back your data with a SQL database, expose with an HTTP API, and a webapp UI.
+- Build a fullstack application using Spring Boot & React. Back your data with a SQL database, expose with an HTTP API, and a webapp UI.
 
 ## Technology Requirements
 - Spring Boot
@@ -35,3 +35,9 @@ Optional Ideas:
 - Logging of the service layer
 - Test suites for the service layer
 - Logging out functionality
+
+
+
+# REQUIREMENTS
+
+
