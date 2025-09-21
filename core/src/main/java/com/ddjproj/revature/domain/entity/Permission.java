@@ -1,2 +1,4 @@
-package com.ddjproj.revature.domain.entity;public class Permission {
+package com.ddjproj.revature.domain.entity;
+
+public class Permission {
 }

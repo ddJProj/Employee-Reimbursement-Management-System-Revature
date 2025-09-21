@@ -1,2 +1,4 @@
-package com.ddjproj.revature.domain.enums;public enum Permissions {
+package com.ddjproj.revature.domain.enums;
+
+public enum Permissions {
 }

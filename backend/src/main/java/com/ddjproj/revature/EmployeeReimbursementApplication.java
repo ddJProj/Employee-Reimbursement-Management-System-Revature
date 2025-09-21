@@ -1,13 +1,13 @@
-package com.ddjproj.revature.backend;
+package com.ddjproj.revature;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendApplication {
+public class EmployeeReimbursementApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
+		SpringApplication.run(EmployeeReimbursementApplication.class, args);
 	}
 
 }

@@ -1,2 +1,4 @@
-package com.ddjproj.revature.domain.entity;public class UserAccount {
+package com.ddjproj.revature.domain.entity;
+
+public class UserAccount {
 }

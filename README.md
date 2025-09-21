@@ -37,7 +37,6 @@ Optional Ideas:
 - Logging out functionality
 
 
-
 # REQUIREMENTS
 
 

@@ -1,2 +1,4 @@
-package com.ddjproj.revature.domain.entity;public class Role {
+package com.ddjproj.revature.domain.entity;
+
+public class Role {
 }

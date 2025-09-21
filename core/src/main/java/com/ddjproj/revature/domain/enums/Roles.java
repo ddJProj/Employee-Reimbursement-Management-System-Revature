@@ -1,2 +1,4 @@
-package com.ddjproj.revature.domain.enums;public enum Role {
+package com.ddjproj.revature.domain.enums;
+
+public enum Roles {
 }

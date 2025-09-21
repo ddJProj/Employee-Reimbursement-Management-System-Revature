@@ -1,2 +1,4 @@
-package com.ddjproj.revature.repository;public interface EmployeeRepository {
+package com.ddjproj.revature.repository;
+
+public interface EmployeeRepository {
 }

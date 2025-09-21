@@ -1,2 +1,4 @@
-package com.ddjproj.revature.repository;public interface UserAccountRepository {
+package com.ddjproj.revature.repository;
+
+public interface UserAccountRepository {
 }

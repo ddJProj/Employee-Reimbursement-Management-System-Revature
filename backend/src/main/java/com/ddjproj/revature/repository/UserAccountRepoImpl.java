@@ -1,2 +1,4 @@
-package com.ddjproj.revature.repository;public class UserAccountRepoImpl {
+package com.ddjproj.revature.repository;
+
+public class UserAccountRepoImpl {
 }
