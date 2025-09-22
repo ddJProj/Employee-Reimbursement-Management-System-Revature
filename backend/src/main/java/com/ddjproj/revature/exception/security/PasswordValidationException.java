@@ -2,8 +2,8 @@ package com.ddjproj.revature.exception.security;
 
 import com.ddjproj.revature.exception.ApplicationException;
 
-public class AuthenticationException extends ApplicationException {
-    public AuthenticationException(String message) {
+public class PasswordValidationException extends ApplicationException {
+    public PasswordValidationException(String message) {
         super(message);
     }
 }

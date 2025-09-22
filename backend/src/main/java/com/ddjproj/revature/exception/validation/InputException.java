@@ -2,8 +2,8 @@ package com.ddjproj.revature.exception.validation;
 
 import com.ddjproj.revature.exception.ApplicationException;
 
-public class EmailValidationException extends ApplicationException {
-    public EmailValidationException(String message) {
+public class InputException extends ApplicationException {
+    public InputException(String message) {
         super(message);
     }
 }

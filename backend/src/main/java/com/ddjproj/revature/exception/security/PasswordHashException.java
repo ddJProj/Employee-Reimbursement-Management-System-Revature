@@ -2,8 +2,9 @@ package com.ddjproj.revature.exception.security;
 
 import com.ddjproj.revature.exception.ApplicationException;
 
-public class AuthenticationException extends ApplicationException {
-    public AuthenticationException(String message) {
+public class PasswordHashException extends ApplicationException {
+    public PasswordHashException(String message) {
         super(message);
     }
 }
+
