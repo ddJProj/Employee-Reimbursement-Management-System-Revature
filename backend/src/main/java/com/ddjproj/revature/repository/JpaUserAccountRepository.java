@@ -1,7 +1,7 @@
 package com.ddjproj.revature.repository;
 
-import com.ddjproj.revature.domain.entity.Role;
 import com.ddjproj.revature.domain.entity.UserAccount;
+import com.ddjproj.revature.domain.enums.Roles;
 import com.ddjproj.revature.repository.UserAccountRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface JpaUserAccountRepository extends JpaRepository<UserAccount, Long> {
     Optional<UserAccount> findUserAccountByEmail(String email);
     boolean existsByEmail(String email);
-    List<UserAccount> findUserAccountByRole(Role role);
-    boolean existsByRole(Role role);
+    List<UserAccount> findUserAccountByRole(Roles role);
+    boolean existsByRole(Roles role);
     // countByRole ?
 }
