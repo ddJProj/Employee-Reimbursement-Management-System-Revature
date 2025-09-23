@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import Header from './components/pages/layout/Header.jsx'
-import Footer from './components/pages/layout/Footer.jsx'
+import {BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
+import Header from './components/pages/layout/Header';
+import Footer from './components/pages/layout/Footer';
+import Dashboard from './components/pages/dashboard/Dashboard';
+
 
 function App() {
   return (
+    <Router>
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <Header />
 
@@ -11,8 +15,12 @@ function App() {
         Hello Tailwind!
       </button>
 
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+      </Routes>
       <Footer />
     </div>
+    </Router>
   );
 }
 
