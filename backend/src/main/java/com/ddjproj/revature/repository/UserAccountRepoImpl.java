@@ -1,7 +1,7 @@
 package com.ddjproj.revature.repository;
 
-import com.ddjproj.revature.domain.entity.Role;
 import com.ddjproj.revature.domain.entity.UserAccount;
+import com.ddjproj.revature.domain.enums.Roles;
 import com.ddjproj.revature.dto.EntityMapper;
 import org.springframework.stereotype.Component;
 
@@ -13,44 +13,54 @@ public class UserAccountRepoImpl implements UserAccountRepository{
     private final JpaUserAccountRepository jpaUserAccountRepository;
     private final EntityMapper entityMapper;
 
+    public UserAccountRepoImpl(JpaUserAccountRepository jpaUserAccountRepository, EntityMapper entityMapper) {
+        this.jpaUserAccountRepository = jpaUserAccountRepository;
+        this.entityMapper = entityMapper;
+    }
+
 
     @Override
     public Optional<UserAccount> findByEmail(String email) {
-        return Optional.empty();
+        return jpaUserAccountRepository.findUserAccountByEmail(email);
     }
 
     @Override
     public boolean existsByEmail(String email) {
-        return false;
+        return jpaUserAccountRepository.existsByEmail(email);
     }
 
     @Override
     public List<UserAccount> findByRole(String role) {
-        return List.of();
+        try{
+            Roles enumRole = Roles.valueOf(role.toUpperCase());
+            return jpaUserAccountRepository.findUserAccountByRole(enumRole);
+        } catch (IllegalArgumentException except){
+            return List.of(); // failure returns empty list
+        }
     }
 
     @Override
-    public boolean existsByRole(Role targetRole) {
-        return false;
+    public boolean existsByRole(Roles targetRole) {
+        return jpaUserAccountRepository.existsByRole(targetRole);
     }
 
     @Override
     public UserAccount save(UserAccount userAccount) {
-        return null;
+        return jpaUserAccountRepository.save(userAccount);
     }
 
     @Override
     public Optional<UserAccount> findById(Long id) {
-        return Optional.empty();
+        return jpaUserAccountRepository.findById(id);
     }
 
     @Override
     public List<UserAccount> findAll() {
-        return List.of();
+        return jpaUserAccountRepository.findAll();
     }
 
     @Override
     public void deleteById(Long id) {
-
+        jpaUserAccountRepository.deleteById(id);
     }
 }
