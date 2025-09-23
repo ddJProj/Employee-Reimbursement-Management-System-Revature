@@ -3,6 +3,7 @@ export enum RoleType {
 	Manager = 'manager',
 	Employee = 'employee',
 	Restricted = 'restricted',
+	Guest = 'guest',
 };
 
 export interface UserAccount {
