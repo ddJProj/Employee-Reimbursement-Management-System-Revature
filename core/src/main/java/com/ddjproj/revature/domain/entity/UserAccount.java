@@ -42,19 +42,10 @@ public class UserAccount {
         this.role = Roles.RESTRICTED;
     }
 
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
-
     // permissions are dependent on Role enum
     @Transient
     public Set<Permissions> getPermissions() {
         return role.getPermissions();
-    }
-
-    public String getPasswordHash() {
-        return null;
     }
 
     // are we adding a created date? if so
