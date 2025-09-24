@@ -1,9 +1,8 @@
 package com.ddjproj.revature.service;
 
 import com.ddjproj.revature.domain.entity.UserAccount;
+import com.ddjproj.revature.domain.enums.Permissions;
 
-import java.security.Permission;
-import java.security.Permissions;
 
 public interface PermissionEvaluator {
     /**
