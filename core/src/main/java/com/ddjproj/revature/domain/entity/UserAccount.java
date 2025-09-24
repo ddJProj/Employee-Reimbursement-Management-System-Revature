@@ -5,15 +5,16 @@ import com.ddjproj.revature.domain.enums.Roles;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name="user_account")
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -23,7 +24,6 @@ public class UserAccount {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Getter
     @Column(nullable = false)
     private String passwordHash;
 
@@ -32,26 +32,19 @@ public class UserAccount {
     @Column(nullable = false)
     private Roles role = Roles.RESTRICTED;
 
-    // ex: employeeId = "EMP" + userAccountId;
-    // ex: managerId = "MAN" + userAccountId;
-    @OneToOne(mappedBy = "user_account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private String roleId;
-
-
     /**
      * New account creation constructor for a UserAccount instance. Automatically sets user role to restricted
      *
      */
-    public UserAccount(String email, String password, String firstName, String lastName){
+    public UserAccount(String email, String password){
         this.email = email;
         this.passwordHash = password;
         this.role = Roles.RESTRICTED;
     }
 
 
-    public void setHashedPassword(String hashedPassword) {
-        this.passwordHash = hashedPassword;
-        // TODO: add definition (set hashed password from input password)
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     // permissions are dependent on Role enum
@@ -60,7 +53,7 @@ public class UserAccount {
         return role.getPermissions();
     }
 
-    public String getHashedPassword() {
+    public String getPasswordHash() {
         return null;
     }
 
