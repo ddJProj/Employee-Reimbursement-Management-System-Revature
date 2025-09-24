@@ -11,11 +11,9 @@ import java.util.Optional;
 @Component
 public class UserAccountRepoImpl implements UserAccountRepository{
     private final JpaUserAccountRepository jpaUserAccountRepository;
-    private final EntityMapper entityMapper;
 
-    public UserAccountRepoImpl(JpaUserAccountRepository jpaUserAccountRepository, EntityMapper entityMapper) {
+    public UserAccountRepoImpl(JpaUserAccountRepository jpaUserAccountRepository) {
         this.jpaUserAccountRepository = jpaUserAccountRepository;
-        this.entityMapper = entityMapper;
     }
 
 
