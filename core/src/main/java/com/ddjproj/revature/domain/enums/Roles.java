@@ -7,7 +7,8 @@ import static com.ddjproj.revature.domain.enums.Permissions.*;
 
 public enum Roles {
     GUEST(EnumSet.of(
-        Permissions.CREATE_ACCOUNT
+        Permissions.CREATE_ACCOUNT,
+        Permissions.LOGIN
     )),
     RESTRICTED(EnumSet.of(
         Permissions.REQUEST_EMPLOYEE_ACCOUNT,
@@ -16,11 +17,15 @@ public enum Roles {
     EMPLOYEE(EnumSet.of(
         Permissions.CREATE_REIMBURSEMENT_REQUEST,
         Permissions.VIEW_SUBMITTED_REIMBURSEMENT_REQUESTS,
+        Permissions.VIEW_SINGLE_REIMBURSEMENT_REQUEST,
+        Permissions.EDIT_PENDING_REIMBURSEMENT,
         Permissions.LOGOUT
     )),
     MANAGER(EnumSet.of(
         Permissions.VIEW_SUBMITTED_REIMBURSEMENT_REQUESTS,
         Permissions.VIEW_ALL_REIMBURSEMENT_REQUESTS,
+        Permissions.VIEW_SINGLE_REIMBURSEMENT_REQUEST,
+        Permissions.VIEW_ALL_USERACCOUNTS,
         Permissions.EDIT_USER_ROLE,
         Permissions.UPGRADE_ACCOUNT_ROLE,
         Permissions.DELETE_USER,
@@ -37,3 +42,4 @@ public Set<Permissions> getPermissions() {
     return EnumSet.copyOf(permissions);
 }
     }
+
