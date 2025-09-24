@@ -1,4 +1,4 @@
-package com.ddjproj.revature.service.auth;
+package com.ddjproj.revature.service;
 
 import java.util.stream.Collectors;
 
@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ddjproj.revature.domain.entity.UserAccount;
-import com.ddjproj.revature.repository.UserAccountRepoImpl;
 
 /*
  * The source I used for JWT has UserDetailsService as a part of User, but I separated the service to limit complexity.
@@ -38,7 +37,7 @@ public class UserDetailService implements UserDetailsService{
 
         authorities.add(new SimpleGrantedAuthority("ROLE_" + userAccount.getRole().name()));
 
-        return new User(userAccount.getEmail(), userAccount.getHashedPassword(), authorities);
+        return new User(userAccount.getEmail(), userAccount.getPasswordHash(), authorities);
 
     }
 
