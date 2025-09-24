@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ddjproj.revature.dto.auth.AuthenticationRequest;
-import com.ddjproj.revature.dto.auth.AuthenticationResponse;
-import com.ddjproj.revature.dto.auth.RegisterAuthRequest;
+import com.ddjproj.revature.dto.auth.LoginAuthRequestDTO;
+import com.ddjproj.revature.dto.auth.LoginAuthResponseDTO;
+import com.ddjproj.revature.dto.auth.RegisterAuthRequestDTO;
 import com.ddjproj.revature.exception.ApplicationException;
 import com.ddjproj.revature.exception.security.InvalidPasswordException;
 import com.ddjproj.revature.exception.validation.EmailValidationException;
@@ -56,7 +56,7 @@ public class AuthenticationController {
      * @throws EmailValidationException 
      */
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterAuthRequest request) throws ApplicationException {
+    public ResponseEntity<LoginAuthResponseDTO> register(@RequestBody RegisterAuthRequestDTO request) throws ApplicationException {
         return ResponseEntity.ok(authenticationService.register(request));
         
     }
@@ -68,7 +68,7 @@ public class AuthenticationController {
      * @throws InvalidPasswordException 
      */
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws InvalidPasswordException {
+    public ResponseEntity<LoginAuthResponseDTO> authenticate(@RequestBody LoginAuthRequestDTO request) throws InvalidPasswordException {
         return ResponseEntity.ok(authenticationService.authenticate(request));
         
     }
@@ -103,7 +103,7 @@ public class AuthenticationController {
             
             // hash the new password
             String hashedPassword = passwordEncoder.encode(newPassword);
-            user.setHashedPassword(hashedPassword);
+            user.setPasswordHash(hashedPassword);
             userAccountRepository.save(user);
             
             return ResponseEntity.ok("Password reset successful. New hash: " + hashedPassword);
