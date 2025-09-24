@@ -60,10 +60,13 @@ public class SecurityBeansConfig {
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                    .requestMatchers("/h2-console/**").permitAll() // FIXME: allow h2 console for development. remove after
                 .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            // add to allow h2 frames. FIXME: remove after development
+            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
             .build();
     }
 
