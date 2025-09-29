@@ -83,7 +83,7 @@ public class AuthenticationController {
     public ResponseEntity<Map<String, String>> logout(@RequestHeader("Authorization") String authHeader) {
         if (authHeader != null && authHeader.startsWith("Bearer ")){
             String token = authHeader.substring(7);
-            tokenBlacklist.blacklistToken(token);
+            tokenBlacklist.blacklistToken(token); // deauth the token for session
         }
         Map<String, String> response = new HashMap<>();
         response.put("message", "You have successfully logged out of the system.");
@@ -100,11 +100,11 @@ public class AuthenticationController {
         try {
             UserAccount user = userAccountRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            
-            // hash the new password
-            String hashedPassword = passwordEncoder.encode(newPassword);
-            user.setPasswordHash(hashedPassword);
-            userAccountRepository.save(user);
+
+
+            String hashedPassword = passwordEncoder.encode(newPassword);     // hash the new password
+            user.setPasswordHash(hashedPassword); // update stored hash value for useraccount
+            userAccountRepository.save(user);  // persist the new hash
             
             return ResponseEntity.ok("Password reset successful. New hash: " + hashedPassword);
         } catch (Exception e) {
