@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.ddjproj.revature.domain.enums.Roles;
+import com.ddjproj.revature.exception.validation.ValidationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -97,7 +98,7 @@ public class AuthenticationService {
      * @throws InvalidPasswordException
      */
     public LoginAuthResponseDTO register(RegisterAuthRequestDTO request)
-            throws EmailValidationException, InvalidPasswordException {
+            throws EmailValidationException, InvalidPasswordException, ValidationException {
         
         if (userAccountRepository.existsByEmail(request.getEmail())){
             throw new EmailValidationException("The email provided is linked to an existing account.");
@@ -108,7 +109,7 @@ public class AuthenticationService {
 
         userAccountDTO.setEmail(request.getEmail());
         userAccountDTO.setPassword(request.getPassword());
-        userAccountDTO.setRole(Roles.GUEST);
+        userAccountDTO.setRole(Roles.RESTRICTED);
 
         UserAccountDTO newUser = userAccountService.createUserAcount(userAccountDTO);
 
@@ -116,8 +117,19 @@ public class AuthenticationService {
 
         String jwtToken = jwtService.generateToken(userDetails);
 
-        // return the contructed token
-        return LoginAuthResponseDTO.builder().token(jwtToken).build();
+        // the set of string permissions for this account based on assigned role
+        Set<String> permissionStrings = newUser.getRole().getPermissions().stream()
+                .map(permission -> permission.name()) // or reference with (Permissions::name)
+                .collect(Collectors.toSet());
+
+        return LoginAuthResponseDTO.builder()
+                .token(jwtToken)
+                .role(newUser.getRole().name()) // including the role in auth response
+                .userId(newUser.getUserAccountId())
+                .email(newUser.getEmail())
+                .permissions(permissionStrings)
+                .build();
+
 
     }
 
