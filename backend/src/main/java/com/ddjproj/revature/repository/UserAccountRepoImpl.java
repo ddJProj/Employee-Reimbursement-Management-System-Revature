@@ -2,7 +2,6 @@ package com.ddjproj.revature.repository;
 
 import com.ddjproj.revature.domain.entity.UserAccount;
 import com.ddjproj.revature.domain.enums.Roles;
-import com.ddjproj.revature.dto.EntityMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
