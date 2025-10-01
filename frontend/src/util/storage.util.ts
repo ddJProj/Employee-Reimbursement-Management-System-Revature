@@ -4,9 +4,12 @@
  * @module Utilities
  * 
  * Resources:
- * - localstorage best practices: https://blog.logrocket.com/localstorage-javascript-complete-guide/
- * - storage patterns: https://www.freecodecamp.org/news/how-to-use-localstorage-with-react-hooks-to-set-and-get-items/
- * - ttl implementation: https://www.sohamkamani.com/javascript/localstorage-with-ttl-expiry/
+ * - @see {https://blog.logrocket.com/localstorage-javascript-complete-guide/} - localstorage best practices
+ * - @see {https://www.freecodecamp.org/news/how-to-use-localstorage-with-react-hooks-to-set-and-get-items/} - storage patterns
+ * - @see {https://www.sohamkamani.com/javascript/localstorage-with-ttl-expiry/} - ttl implementation
+ * - @see {https://auth0.com/docs/secure/security-guidance/data-security/token-storage} - 
+ * - @see {https://blog.logrocket.com/localstorage-javascript-complete-guide/} - 
+ * - @see {https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html#local-storage} - 
  */
 
 const CURRENT_VERSION = 1;
