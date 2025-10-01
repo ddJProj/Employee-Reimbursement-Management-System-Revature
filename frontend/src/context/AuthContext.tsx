@@ -34,6 +34,15 @@ interface AuthContextType {
   isauthenticated: boolean;
 }
 
+/**
+ * Props for AuthProvider component
+ */
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+
+
 /** context with undefined default (will be set by provider) */
 export const authcontext = createcontext<authcontexttype | undefined>(undefined);
 
@@ -55,56 +64,24 @@ export function AuthProvider({ children }: { children: ReactNode }): React.React
    * validates token isn't expired before restoring
    */
   useEffect(() => {
-    const restoreSession = async (): Promise<void> => {
-      console.log('Checking for existing auth session...');
-      
-      try {
-        // check if we have a valid token in storage
-        const isValid = authUtils.isAuthenticated();
-        
-        if (!isValid) {
-          console.log('No valid auth session found');
-          setIsLoading(false);
-          return;
-        }
-        
-        // retrieve stored data
-        const storedToken = authUtils.getToken();
-        const storedUser = authUtils.getUser();
-        
-        if (storedToken && storedUser) {
-          console.log('Restoring auth session for:', storedUser.email);
-          
-          // restore session state
-          setToken(storedToken);
-          setUser({
-            userId: storedUser.userId,
-            email: storedUser.email,
-            role: storedUser.role,
-            permissions: storedUser.permissions || []
-          });
-          
-          // set token for api requests
-          setAuthToken(storedToken);
-          
-          console.log('Auth session restored successfully');
-          
-          // TODO: Optional - Verify token with backend
-          // This could be a call to a /api/auth/verify endpoint
-          // to ensure the token is still valid on the server
-        }
-      } catch (error) {
-        console.error('Error restoring auth session:', error);
-        // clear any corrupted data
-        authUtils.clearAuthData();
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    console.log('AuthContext: Checking for existing session');
     
-    restoreSession();
-  }, []); // only run once on mount
-
+    const storedToken = authUtils.getToken();
+    const storedUser = authUtils.getUser();
+    
+    if (storedToken && storedUser && authUtils.isAuthenticated()) {
+      console.log('AuthContext: Restoring session for user:', storedUser.email);
+      setToken(storedToken);
+      setUser(storedUser);
+      setAuthToken(storedToken);
+    } else {
+      console.log('AuthContext: No valid session found');
+      // Clear any invalid data
+      authUtils.clearAuthData();
+    }
+    
+    setIsLoading(false);
+  }, []);
   /**
    * handles user login by storing auth data and updating state
    * 
@@ -148,9 +125,28 @@ export function AuthProvider({ children }: { children: ReactNode }): React.React
     
     console.log('User logged out successfully');
     
-    // TODO: Call backend logout endpoint to invalidate token
-    // This should be done from the component that calls logout
+    // TODO: call backend logout endpoint to invalidate token
+    // this should be done from the component that calls logout
   };
+
+  /**
+   * updates user data in auth context and localstorage
+   * used when user role or permissions change
+   * 
+   * @param {UserAccount} updatedUser - updated user account data
+   * @returns {void}
+   */
+  const updateUser = (updatedUser: UserAccount): void => {
+    console.log('AuthContext: Updating user data for:', updatedUser.email);
+    
+    setUser(updatedUser);
+    
+    // update localstorage with new user data, keep existing token
+    if (token) {
+      authUtils.setAuthData(token, updatedUser);
+    }
+  };
+
 
   /** token and user required for valid auth state */
   const isAuthenticated: boolean = !!token && !!user;
@@ -160,6 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.React
     user,
     token,
     isLoading,
+    updateUser,
     login,
     logout,
     isAuthenticated
@@ -171,38 +168,6 @@ export function AuthProvider({ children }: { children: ReactNode }): React.React
     </AuthContext.Provider>
   );
 }
-
-/**
- * custom hook for accessing authentication context
- * req use within authprovider component tree
- * 
- * @returns {AuthContextType} Authentication context value
- * @throws {Error} If used outside of AuthProvider
- * 
- * @example
- * ```typescript
- * const { user, login, logout, isAuthenticated } = useAuth();
- * 
- * if (isLoading) {
- *   return <LoadingSpinner />;
- * }
- * 
- * if (!isAuthenticated) {
- *   return <Navigate to="/auth/login" />;
- * }
- * ```
- */
-export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext);
-  
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  
-  return context;
-}
-
-
 
 
 
