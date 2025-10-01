@@ -11,7 +11,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
-import { userApi } from '../services/userApi';
+import { userApi } from '../service/user.api.service'; 
 import { ROUTES } from '../constant/routes.constant';
 
 /**
