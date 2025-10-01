@@ -14,7 +14,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { authApi, setAuthToken } from '../../services/authApi';
+import { authApi, setAuthToken } from '../../service/auth.api.service';
 import { authUtils } from '../../util/auth.util';
 import { ROUTES, ROLE_REDIRECT } from '../../constant/routes.constant';
 
