@@ -16,7 +16,7 @@ const AUTH_KEYS = {
 
 export const authUtils = {
   /**
-   * Stores tokens and user data in storage.
+   * Stores tokens and user data in storage
    * @param token - Authentication token
    * @param user - User data
    */
@@ -33,7 +33,7 @@ export const authUtils = {
 
 
   /**
-   * retrieves the stored token.
+   * retrieves the stored token
    * @returns The stored token or null
    */
   getToken(): string | null {
@@ -41,7 +41,7 @@ export const authUtils = {
   },
 
   /**
-   * retrieves the stored user data.
+   * retrieves the stored user data
    * @returns User data object or null
    */
   getUser(): Record<string, any> | null {
@@ -55,7 +55,7 @@ export const authUtils = {
   },
 
   /**
-   * clears all authentication data from storage.
+   * clears all authentication data from storage
    */
   clearAuthData(): void {
     console.log("Clearing auth data");
@@ -64,7 +64,7 @@ export const authUtils = {
   },
 
   /**
-   * check if the stored token is valid and not expired.
+   * check if the stored token is valid and not expired
    * @returns whether the token is valid
    */
 // In auth.util.ts, modify isAuthenticated()
@@ -98,7 +98,7 @@ isAuthenticated(): boolean {
 
 
   /**
-   * Refreshes the token if close to expiration.
+   * refreshes the token if close to expiration
    * @param thresholdMinutes - Minutes before expiration to refresh
    * @returns Whether a refresh is required
    */
