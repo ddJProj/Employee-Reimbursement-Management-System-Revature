@@ -1,22 +1,24 @@
-
+/**
+ * @file src/constants/types.constant.ts
+ * @description 
+ * @module constant
+ * 
+ * Resources:
+ * @see {@link } -
+ */
 export enum RoleType {
-	Manager = 'manager',
-	Employee = 'employee',
-	Restricted = 'restricted',
-	Guest = 'guest',
+	Manager = 'MANAGER',
+	Employee = 'EMPLOYEE',
+	Restricted = 'RESTRICTED',
+	Guest = 'GUEST',
 };
 
 export interface UserAccount {
-	id: number, // userAccount Id
-	email: ,
-	// name: ,?
-	role: RoleType,
-	permissions: [], // add here? or destructure from role?
+	userId: number; // userAccount Id
+	email: string;
+	role: RoleType;
+	permissions: string[]; //
 }
 
 
-export enum Permissions {
-// TODO: INSERT THE FULL LIST OF PERMISSION HERE WHEN FINISHED
-	// follow this format:
-	// REQUEST_REIMBURSEMENT = 'REQUEST_REIMBURSEMENT',
-}
+export type Permission = string; 
