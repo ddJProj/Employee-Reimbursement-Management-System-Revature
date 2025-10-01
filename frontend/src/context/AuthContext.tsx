@@ -14,7 +14,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { UserAccount } from '../constant/types.constant';
 import { authUtils } from '../util/auth.util';
-import { setAuthToken } from '../services/authApi';
+import { setAuthToken } from '../service/auth.api.service'; 
 
 /**
  * structure of authentication context value
