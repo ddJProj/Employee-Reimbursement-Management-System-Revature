@@ -13,7 +13,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { authApi } from '../../services/authApi';
+import { authApi } from '../../service/auth.api.service'; 
 import { ROUTES } from '../../constant/routes.constant';
 import { RoleType } from '../../constant/types.constant';
 
@@ -40,35 +40,20 @@ const navigationItems: NavItem[] = [
   },
   // manager-specific items
   {
-    label: 'All Reimbursements',
-    path: '/reimbursements/all',
-    roles: [RoleType.Manager]
-  },
-  {
-    label: 'User Management',
-    path: '/users',
-    roles: [RoleType.Manager]
-  },
-  {
-    label: 'Pending Approvals',
-    path: '/reimbursements/pending',
+    label: 'Manager Dashboard',
+    path: ROUTES.MANAGER,
     roles: [RoleType.Manager]
   },
   // employee-specific items
   {
-    label: 'My Reimbursements',
-    path: '/reimbursements/my',
-    roles: [RoleType.Employee]
-  },
-  {
-    label: 'Create Reimbursement',
-    path: '/reimbursements/new',
+    label: 'Employee Dashboard',
+    path: ROUTES.EMPLOYEE,
     roles: [RoleType.Employee]
   },
   // restricted-specific items
   {
-    label: 'Request Access',
-    path: '/access/request',
+    label: 'Restricted Dashboard',
+    path: ROUTES.RESTRICTED,
     roles: [RoleType.Restricted]
   }
 ];
@@ -111,34 +96,46 @@ function Sidebar(): React.ReactElement {
     console.log('Logout complete, redirected to login');
   };
   
-		// don't render sidebar if not authenticated
+  // don't render sidebar if not authenticated
   if (!isAuthenticated || !user) {
     return <></>;
   }
   
   /**
-   * filters navigation items based on user role
+   * Filters navigation items based on user role
    */
   const userNavItems = navigationItems.filter(item => 
     item.roles.includes(user.role)
-  );
-  
+  );  
+
+
+
   return (
     <aside style={{ 
       width: '250px', 
       height: '100vh', 
       borderRight: '1px solid #ccc',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      backgroundColor: '#f8f9fa'
     }}>
       {/* user info section */}
       <div style={{ padding: '20px', borderBottom: '1px solid #ccc' }}>
-        <h2>ERS</h2>
-        <p style={{ fontSize: '14px', marginTop: '10px' }}>
+        <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>
+          ERS
+        </h2>
+        <p style={{ fontSize: '14px', marginTop: '10px', marginBottom: '5px' }}>
           {user.email}
         </p>
-        <p style={{ fontSize: '12px', color: '#666' }}>
-          Role: {user.role}
+        <p style={{ 
+          fontSize: '12px', 
+          color: '#666',
+          backgroundColor: '#e9ecef',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          display: 'inline-block'
+        }}>
+          {user.role}
         </p>
       </div>
       
@@ -155,7 +152,8 @@ function Sidebar(): React.ReactElement {
                   textDecoration: 'none',
                   color: isActive ? '#007bff' : '#333',
                   backgroundColor: isActive ? '#e9ecef' : 'transparent',
-                  borderRadius: '4px'
+                  borderRadius: '4px',
+                  transition: 'all 0.2s'
                 })}
               >
                 {item.label}
@@ -180,14 +178,31 @@ function Sidebar(): React.ReactElement {
             color: 'white',
             border: 'none',
             borderRadius: '4px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500'
           }}
         >
           Logout
         </button>
       </div>
+      
+      {/* development info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div style={{ 
+          padding: '10px 20px', 
+          fontSize: '10px',
+          color: '#999',
+          borderTop: '1px solid #ccc'
+        }}>
+          <p style={{ margin: 0 }}>Permissions: {user.permissions.length}</p>
+        </div>
+      )}
     </aside>
   );
 }
 
-export default Sidebar;
+export default Sidebar; 
+
+
+
