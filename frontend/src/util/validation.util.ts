@@ -1,11 +1,23 @@
-// src/util/validation.util.ts
+/**
+ * @file src/util/validation.util.ts
+ * @description reusable validation utilities using Zod schemas
+ * @module Utilities
+ * 
+ * Resources:
+ * - @see {https://zod.dev/} - zod documentation
+ * - @see {https://www.patterns.dev/posts/form-validation/} - form validation patterns
+ * - @see {https://regexr.com/} - regex for email/password
+ * - @see {} - 
+ */
 import { zod } from "zod";
 import { isValid, parseISO } from "date-fns";
 
-// Define the reusable patterns and schemas with proper typing
+
+
+// define the reusable patterns and schemas with proper typing
 export const validationUtil = {
   /**
-   * Reusable validation / regex
+   * reusable validation / regex
    */
   patterns: {
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
@@ -13,7 +25,7 @@ export const validationUtil = {
   },
 
   /**
-   * Common Zod schema
+   * common zod schema
    */
   schemas: {
     email: zod.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email address"),
@@ -27,9 +39,9 @@ export const validationUtil = {
   },
 
   /**
-   * Validates data with Zod schema.
-   * @param schema - Zod schema to validate input
-   * @param data - Data to validate
+   * validates data with zod schema
+   * @param schema - zod schema to validate input
+   * @param data - data to validate
    * @returns Result with isValid flag and errors
    */
   validateWithSchema<T>(
