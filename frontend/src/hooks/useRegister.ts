@@ -12,7 +12,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
-import { authApi } from '../services/authApi';
+import { authApi } from'../service/auth.api.service'; 
 import { ROUTES } from '../constant/routes.constant';
 
 /**
