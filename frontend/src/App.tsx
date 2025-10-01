@@ -1,26 +1,61 @@
-import { useState } from 'react';
-import {BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
-import Header from './components/pages/layout/Header';
-import Footer from './components/pages/layout/Footer';
-import Dashboard from './components/pages/dashboard/Dashboard';
+/**
+ * Primary App Container -
+ * This is the entry point/core application container for the application
+ *
+ * @file /src/App.tsx
+ * @description - the root application structure all components are rendered within
+ *
+ * @returns {React.ReactElement} full application
+ * 
+ * @see {@link https://reactrouter.com/en/main/start/tutorial} - router documentation
+ * @see {@link https://react.dev/learn/passing-data-deeply-with-context} - context pattern
+ * @see {@link https://jsdoc.app/tags.html} - 
+ * @see {@link https://google.github.io/styleguide/tsguide.html#comments} - 
+ * @see {@link https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/basic_type_example/#documenting-components} -
+ *
+ * @author ddjProj
+ * @created
+ */
 
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import Login from './pages/auth/Login';
+import Registration from './pages/auth/Registration';
+import Dashboard from './pages/dashboard/Dashboard';
+import { ROUTES } from './constant/routes.constant';
 
-function App() {
+function App(): React.ReactElement {
   return (
-    <Router>
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <Header />
-
-      <button className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
-        Hello Tailwind!
-      </button>
-
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-      <Footer />
-    </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* public routes */}
+          <Route path={ROUTES.LOGIN} element={<Login />} />
+          <Route path={ROUTES.REGISTER} element={<Registration />} />
+          
+          {/* protected dashboard - handles all role-based routing */}
+          <Route 
+            path={ROUTES.DASHBOARD} 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* dashboard handles these paths internally via navigate() */}
+          <Route path={ROUTES.EMPLOYEE} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path={ROUTES.MANAGER} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path={ROUTES.RESTRICTED} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          
+          {/* default redirect */}
+          <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
+          <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
