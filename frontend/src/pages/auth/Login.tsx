@@ -1,24 +1,27 @@
 /**
  * @file src/pages/auth/Login.tsx
- * @description login form component with full auth integration
+ * @description Login form component with full auth integration and session persistence
  * @module Authentication
  * 
  * Resources:
- * - @see {https://reactrouter.com/en/main/hooks/use-navigate} - useNavigate hook 
- * - @see {https://www.developerway.com/posts/how-to-handle-errors-in-react} - error handling in react
- * - @see {https://react-hook-form.com/get-started#TypeScript} - react forms with typescript
- * - @see {https://dev.to/miracool/how-to-manage-user-authentication-with-react-js-3ic5} - 
- * - @see {} - 
+ * @see {@link https://reactrouter.com/en/main/hooks/use-navigate} - React Router navigation
+ * @see {@link https://www.developerway.com/posts/how-to-handle-errors-in-react} - Error handling patterns
+ * @see {@link https://react-hook-form.com/get-started#TypeScript} - Form handling in React
+ * @see {@link https://dev.to/miracool/how-to-manage-user-authentication-with-react-js-3ic5} - Auth patterns
+ * @see {@link https://www.robinwieruch.de/react-hooks-fetch-data/} - Data fetching with hooks
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { authApi, setAuthToken } from '../../services/authApi';
+import { authUtils } from '../../util/auth.util';
+import { ROUTES, ROLE_REDIRECT } from '../../constant/routes.constant';
 
 /**
  * login form component that handles user authentication
- * integrates with authcontext and backend api
+ * integrates with AuthContext and backend API
+ * automatically redirects authenticated users
  * 
  * @returns {React.ReactElement} login form component
  */
@@ -27,17 +30,55 @@ function Login(): React.ReactElement {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   
-  // ui state
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  // validation state
+  const [validationError, setValidationError] = useState<string | null>(null);
   
-  // hooks
-  const { login } = useAuth();
+  // Hooks
+  const { isAuthenticated, user } = useAuth();
+  const { handleLogin, isLoading, error } = useLogin();
   const navigate = useNavigate();
+  
+  /**
+   * redirect if already authenticated
+   * handles cases where user navigates to login while logged in
+   */
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      console.log('User already authenticated, redirecting to dashboard');
+      const redirectPath = ROLE_REDIRECT[user.role] || ROUTES.DASHBOARD;
+      navigate(redirectPath);
+    }
+  }, [isAuthenticated, user, navigate]);
 
   /**
-   * handles form submission and authentication
-   * calls api, updates auth context, and redirects on success
+   * validates form inputs before submission
+   * checks for empty fields and valid email format
+   * 
+   * @returns {boolean} true if validation passes, false otherwise
+   */
+  const validateForm = (): boolean => {
+    // clear previous validation errors
+    setValidationError(null);
+    
+    // check for empty fields
+    if (!email || !password) {
+      setValidationError('Please fill in all fields');
+      return false;
+    }
+    
+    // email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setValidationError('Please enter a valid email address');
+      return false;
+    }
+    
+    return true;
+  };
+
+  /**
+   * handles form submission
+   * validates inputs and calls uselogin hook
    * 
    * @param {React.FormEvent<HTMLFormElement>} e - form submit event
    * @returns {Promise<void>}
@@ -45,95 +86,54 @@ function Login(): React.ReactElement {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
-    // clear previous errors
-    setError(null);
-    
-    // basic validation
-    if (!email || !password) {
-      setError('Please fill in all fields');
+    // validate before attempting login
+    if (!validateForm()) {
       return;
     }
     
-    setIsLoading(true);
-    console.log('Starting login process for:', email);
+    console.log('Submitting login form for:', email);
     
-    try {
-      // call login api
-      const response = await authApi.login({ email, password });
-      console.log('Login API call successful');
-      
-      // set token for future api calls
-      setAuthToken(response.token);
-      
-      // update auth context
-      login(response.token, response.user);
-      
-      // TODO: Store token in localStorage for persistence
-      // localStorage.setItem('authToken', response.token);
-      // localStorage.setItem('authUser', JSON.stringify(response.user));
-      
-      console.log('Redirecting to dashboard for role:', response.user.role);
-      
-      // redirect based on role
-      switch (response.user.role) {
-        case 'MANAGER':
-          navigate('/dashboard/manager');
-          break;
-        case 'EMPLOYEE':
-          navigate('/dashboard/employee');
-          break;
-        case 'RESTRICTED':
-          navigate('/dashboard/restricted');
-          break;
-        default:
-          navigate('/dashboard');
-      }
-    } catch (err) {
-      console.error('Login failed:', err);
-      
-      // handle error
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unexpected error occurred. Please try again.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    // uselogin hook handles the api call, auth context update, and redirect
+    await handleLogin(email, password);
   };
 
   /**
    * updates email state on input change
+   * clears validation errors when user starts typing
    * 
    * @param {React.ChangeEvent<HTMLInputElement>} e - input change event
    * @returns {void}
    */
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value);
-    // clear error when user starts typing
-    if (error) setError(null);
+    // Clear errors when user starts typing
+    if (validationError) setValidationError(null);
   };
 
   /**
    * updates password state on input change
+   * clears validation errors when user starts typing
    * 
-   * @param {React.ChangeEvent<HTMLInputElement>} e - input change event
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event
    * @returns {void}
    */
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setPassword(e.target.value);
-    // clear error when user starts typing
-    if (error) setError(null);
+    // Clear errors when user starts typing
+    if (validationError) setValidationError(null);
   };
+
+  // display validation error or api error
+  const displayError = validationError || error;
 
   return (
     <div>
       <h2>Login</h2>
       
       {/* display error message */}
-      {error && (
-        <div role="alert" style={{ color: 'red' }}>
-          {error}
+      {displayError && (
+        <div role="alert" style={{ color: 'red', marginBottom: '10px' }}>
+          {displayError}
         </div>
       )}
       
@@ -149,6 +149,7 @@ function Login(): React.ReactElement {
             placeholder="Enter your email"
             required
             disabled={isLoading}
+            autoComplete="email"
           />
         </div>
         
@@ -163,6 +164,7 @@ function Login(): React.ReactElement {
             placeholder="Enter your password"
             required
             disabled={isLoading}
+            autoComplete="current-password"
           />
         </div>
         
@@ -172,10 +174,10 @@ function Login(): React.ReactElement {
       </form>
       
       <p>
-        Don't have an account? <Link to="/auth/register">Register here</Link>
+        Don't have an account? <Link to={ROUTES.REGISTER}>Register here</Link>
       </p>
       
-      {/* dev helpers */}
+      {/* development helpers */}
       {process.env.NODE_ENV === 'development' && (
         <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
           <p>Test Accounts:</p>
