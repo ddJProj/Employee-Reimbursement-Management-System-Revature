@@ -14,9 +14,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { authApi, setAuthToken } from '../../service/auth.api.service';
-import { authUtils } from '../../util/auth.util';
+import { useLogin } from '../../hooks/useLogin';
 import { ROUTES, ROLE_REDIRECT } from '../../constant/routes.constant';
+import type { RoleType } from '../../constant/types.constant';
 
 /**
  * login form component that handles user authentication
@@ -45,7 +45,7 @@ function Login(): React.ReactElement {
   useEffect(() => {
     if (isAuthenticated && user) {
       console.log('User already authenticated, redirecting to dashboard');
-      const redirectPath = ROLE_REDIRECT[user.role] || ROUTES.DASHBOARD;
+      const redirectPath = ROLE_REDIRECT[user.role as RoleType] || ROUTES.DASHBOARD;
       navigate(redirectPath);
     }
   }, [isAuthenticated, user, navigate]);
