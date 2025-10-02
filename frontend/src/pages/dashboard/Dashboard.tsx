@@ -12,6 +12,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ROLE_REDIRECT } from '../../constant/routes.constant';
+import type { RoleType } from '../../constant/types.constant';
 
 /**
  * main db component, acts as router based on role
@@ -41,7 +42,7 @@ function Dashboard(): React.ReactElement {
     }
     
     // redirect based on user role
-    const redirectPath = ROLE_REDIRECT[user.role];
+    const redirectPath = ROLE_REDIRECT[user.role as RoleType];
     
     if (redirectPath) {
       console.log(`Redirecting ${user.role} to ${redirectPath}`);
