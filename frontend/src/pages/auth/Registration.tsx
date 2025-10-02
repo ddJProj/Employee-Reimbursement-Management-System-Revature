@@ -55,12 +55,14 @@ function Registration(): React.ReactElement {
    * redirect if already authenticated
    */
   useEffect(() => {
+    console.log('Registration: Checking auth state', { isAuthenticated, user: user?.email });
     if (isAuthenticated && user) {
       console.log('User already authenticated, redirecting to dashboard');
       const redirectPath = ROLE_REDIRECT[user.role as RoleType] || ROUTES.DASHBOARD;
-      navigate(redirectPath);
+      console.log('Redirecting to:', redirectPath);
+      navigate(redirectPath, {replace:true});
     }
-  }, [isAuthenticated, user, navigate]);
+  }, []);
 
   /**
    * validates password meets all requirements
@@ -212,93 +214,95 @@ function Registration(): React.ReactElement {
   };
 
   return (
-    <div>
-      <h2>Create Account</h2>
-      
-      {/* display error message */}
-      {error && (
-        <div role="alert" style={{ color: 'red' }}>
-          {error}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="Enter your email"
-            required
-            disabled={isLoading}
-            autoComplete="email"
-          />
-        </div>
+    
+
+      <div>
+        <h2>Create Account</h2>
         
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={handlePasswordChange}
-            onFocus={handlePasswordFocus}
-            onBlur={handlePasswordBlur}
-            placeholder="Create a password"
-            required
-            disabled={isLoading}
-            autoComplete="new-password"
-          />
+        {/* display error message */}
+        {error && (
+          <div role="alert" style={{ color: 'red' }}>
+            {error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Enter your email"
+              required
+              disabled={isLoading}
+              autoComplete="email"
+            />
+          </div>
           
-          {/* password requirements hint */}
-          {showPasswordRequirements && (
-            <div style={{ fontSize: '12px', marginTop: '5px', color: '#666' }}>
-              <p>Password must contain:</p>
-              <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
-                <li>At least 8 characters</li>
-                <li>One uppercase letter</li>
-                <li>One lowercase letter</li>
-                <li>One number</li>
-                <li>One special character (@#$%^&+=!)</li>
-              </ul>
-            </div>
-          )}
-        </div>
+          <div>
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={handlePasswordChange}
+              onFocus={handlePasswordFocus}
+              onBlur={handlePasswordBlur}
+              placeholder="Create a password"
+              required
+              disabled={isLoading}
+              autoComplete="new-password"
+            />
+            
+            {/* password requirements hint */}
+            {showPasswordRequirements && (
+              <div style={{ fontSize: '12px', marginTop: '5px', color: '#666' }}>
+                <p>Password must contain:</p>
+                <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+                  <li>At least 8 characters</li>
+                  <li>One uppercase letter</li>
+                  <li>One lowercase letter</li>
+                  <li>One number</li>
+                  <li>One special character (@#$%^&+=!)</li>
+                </ul>
+              </div>
+            )}
+          </div>
+          
+          <div>
+            <label htmlFor="confirmPassword">Confirm Password:</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              placeholder="Confirm your password"
+              required
+              disabled={isLoading}
+              autoComplete="new-password"
+            />
+          </div>
+          
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Creating Account...' : 'Register'}
+          </button>
+        </form>
         
-        <div>
-          <label htmlFor="confirmPassword">Confirm Password:</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            placeholder="Confirm your password"
-            required
-            disabled={isLoading}
-            autoComplete="new-password"
-          />
-        </div>
+        <p>
+          Already have an account? <Link to={ROUTES.LOGIN}>Login here</Link>
+        </p>
         
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Creating Account...' : 'Register'}
-        </button>
-      </form>
-      
-      <p>
-        Already have an account? <Link to={ROUTES.LOGIN}>Login here</Link>
-      </p>
-      
-      {/* information about default role */}
-      <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
-        <p>Note: New accounts start with restricted access.</p>
-        <p>Request employee access after registration.</p>
+        {/* information about default role */}
+        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
+          <p>Note: New accounts start with restricted access.</p>
+          <p>Request employee access after registration.</p>
+        </div>
       </div>
-    </div>
   );
 }
 
