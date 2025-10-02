@@ -9,7 +9,7 @@
  * - @see {https://regexr.com/} - regex for email/password
  * - @see {} - 
  */
-import { zod } from "zod";
+import { z } from "zod";
 import { isValid, parseISO } from "date-fns";
 
 
@@ -28,11 +28,11 @@ export const validationUtil = {
    * common zod schema
    */
   schemas: {
-    email: zod.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email address"),
-    password: zod
+    email: z.string().regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid email address"),
+    password: z
       .string()
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/, "Weak password. Must include uppercase, lowercase, and numbers."),
-    date: zod.string().refine(
+    date: z.string().refine(
       (value) => isValid(parseISO(value)),
       "Invalid date format. Use YYYY-MM-DD."
     ),
@@ -45,18 +45,18 @@ export const validationUtil = {
    * @returns Result with isValid flag and errors
    */
   validateWithSchema<T>(
-    schema: zod.ZodType<T>,
+    schema: z.ZodType<T>,
     data: unknown
   ): { isValid: boolean; errors: Record<string, string> } {
     try {
       schema.parse(data);
       return { isValid: true, errors: {} };
     } catch (error) {
-      if (error instanceof zod.ZodError) {
-        const errors = error.errors.reduce((acc, err) => {
+      if (error instanceof z.ZodError) {
+        const errors = error.issues.reduce((acc: Record<string, string>, err: any) => {
           acc[err.path.join(".")] = err.message;
           return acc;
-        }, {} as Record<string, string>);
+        }, {});
         return { isValid: false, errors };
       }
       return { isValid: false, errors: { _error: "Unknown error occurred" } };
