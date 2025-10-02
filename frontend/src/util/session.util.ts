@@ -8,7 +8,7 @@
  * - @see {https://www.robinwieruch.de/react-token-authentication/} - react token auth guide
  */
 
-import { UserAccount } from "../constant/types.constant";
+import type { UserAccount } from "../constant/types.constant";
 import { authUtils } from "./auth.util";
 
 /**
