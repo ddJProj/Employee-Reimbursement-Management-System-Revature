@@ -80,7 +80,7 @@ export const authApi = {
       console.log('Attempting login for:', credentials.email);
       
       const response = await axios.post<AuthResponse>(
-        `${API_BASE_URL}/auth/authenticate`,
+        `${API_BASE_URL}/auth/login`,
         credentials
       );
       
