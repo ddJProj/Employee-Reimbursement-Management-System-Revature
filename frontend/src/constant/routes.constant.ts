@@ -13,7 +13,7 @@ export const ROUTES = {
 	DASHBOARD: "/dashboard",
 	MANAGER: "/dashboard/manager",
 	EMPLOYEE: "/dashboard/employee",
-	RESTRICTED: "dashboard/restricted",
+	RESTRICTED: "/dashboard/restricted",
 	GUEST: "/auth/login"
 } as const;
 
