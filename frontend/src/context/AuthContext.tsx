@@ -11,8 +11,9 @@
  * @see {@link https://medium.com/@ryanchenkie_40935/react-authentication-how-to-store-jwt-in-a-cookie-346519310e81} - JWT storage strategies
  */
 
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { UserAccount } from '../constant/types.constant';
+import React, { createContext, useState, useEffect } from 'react';
+import type {ReactNode} from 'react';
+import type {UserAccount} from '../constant/types.constant';
 import { authUtils } from '../util/auth.util';
 import { setAuthToken } from '../service/auth.api.service'; 
 
@@ -21,17 +22,19 @@ import { setAuthToken } from '../service/auth.api.service';
  */
 interface AuthContextType {
   /** current authenticated user or null */
-  user: useraccount | null;
+  user: UserAccount | null;
   /** jwt token for api authentication */
   token: string | null;
   /** loading state during initial auth check */
-  isloading: boolean;
+  isLoading: boolean;
   /** function to log in user */
-  login: (token: string, user: useraccount) => void;
+  login: (token: string, user: UserAccount) => void;
+  /** function to update a user Account */
+  updateUser: (user: UserAccount) => void;
   /** function to log out user */
   logout: () => void;
   /** computed boolean for authentication status */
-  isauthenticated: boolean;
+  isAuthenticated: boolean;
 }
 
 /**
@@ -44,7 +47,7 @@ interface AuthProviderProps {
 
 
 /** context with undefined default (will be set by provider) */
-export const authcontext = createcontext<authcontexttype | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 /**
  * provides authentication state to entire application
@@ -53,8 +56,9 @@ export const authcontext = createcontext<authcontexttype | undefined>(undefined)
  * @param {ReactNode} children - child components to wrap
  * @returns {React.ReactElement} provider component with auth context
  */
-export function AuthProvider({ children }: { children: ReactNode }): React.ReactElement {
-  // Authentication state
+export function AuthProvider({ children }: AuthProviderProps): React.ReactElement {
+
+  // authentication state
   const [user, setUser] = useState<UserAccount | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -72,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.React
     if (storedToken && storedUser && authUtils.isAuthenticated()) {
       console.log('AuthContext: Restoring session for user:', storedUser.email);
       setToken(storedToken);
-      setUser(storedUser);
+      setUser(storedUser as UserAccount);
       setAuthToken(storedToken);
     } else {
       console.log('AuthContext: No valid session found');
@@ -82,6 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }): React.React
     
     setIsLoading(false);
   }, []);
+
   /**
    * handles user login by storing auth data and updating state
    * 
