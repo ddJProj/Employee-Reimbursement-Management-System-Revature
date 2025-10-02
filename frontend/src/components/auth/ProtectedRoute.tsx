@@ -13,7 +13,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { RoleType } from '../../constant/types.constant';
 import { ROUTES } from '../../constant/routes.constant';
 
 /**
