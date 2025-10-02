@@ -43,12 +43,13 @@ function Login(): React.ReactElement {
    * handles cases where user navigates to login while logged in
    */
   useEffect(() => {
+    console.log('Login: checking auth state', {isAuthenticated, user: user?.email});
     if (isAuthenticated && user) {
       console.log('User already authenticated, redirecting to dashboard');
       const redirectPath = ROLE_REDIRECT[user.role as RoleType] || ROUTES.DASHBOARD;
-      navigate(redirectPath);
+      navigate(redirectPath, {replace: true});
     }
-  }, [isAuthenticated, user, navigate]);
+  }, []);
 
   /**
    * validates form inputs before submission
