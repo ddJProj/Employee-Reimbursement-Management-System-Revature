@@ -7,6 +7,7 @@
 import React from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import { useUpgradeRequest } from '../../../hooks/useUpgradeRequest';
+import Layout from '../../../components/layout/Layout';
 
 /**
  * dashboard component for restricted users
@@ -18,7 +19,8 @@ import { useUpgradeRequest } from '../../../hooks/useUpgradeRequest';
 function RestrictedDashboard(): React.ReactElement {
   const { user } = useAuth();
   const { requestUpgrade, isLoading, error, success } = useUpgradeRequest();
-
+  // troubleshooting no sidebar
+  console.log('Restricted Dashboard - Auth State:', { user: user?.email, role: user?.role });
   /**
    * handles click on request access button
    * calls upgrade request hook
@@ -31,6 +33,7 @@ function RestrictedDashboard(): React.ReactElement {
   };
 
   return (
+    <Layout>
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Restricted Dashboard</h1>
       
@@ -112,6 +115,7 @@ function RestrictedDashboard(): React.ReactElement {
         </div>
       )}
     </div>
+    </Layout>
   );
 }
 
