@@ -10,7 +10,9 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { reimbursementApi, Reimbursement, ReimbursementStatus } from '../service/reimbursement.api.service';
+import { reimbursementApi } from '../service/reimbursement.api.service';
+import type { Reimbursement, ReimbursementStatus } from '../service/reimbursement.api.service';
+
 import { useAuth } from './useAuth';
 
 /**
