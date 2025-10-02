@@ -9,7 +9,7 @@
  */
 
 import axios, { AxiosError } from 'axios';
-import { UserAccount, RoleType } from '../constant/types.constant';
+import type { UserAccount, RoleType } from '../constant/types.constant';
 
 /**
  * base api configuration
