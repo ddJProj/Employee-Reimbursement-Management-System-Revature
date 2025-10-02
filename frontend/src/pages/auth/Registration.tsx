@@ -13,8 +13,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { authApi } from '../../services/authApi';
+import { authApi } from '../../service/auth.api.service';
 import { ROUTES, ROLE_REDIRECT } from '../../constant/routes.constant';
+import type { RoleType } from '../../constant/types.constant';
 
 /**
  * password validation requirements
@@ -56,7 +57,7 @@ function Registration(): React.ReactElement {
   useEffect(() => {
     if (isAuthenticated && user) {
       console.log('User already authenticated, redirecting to dashboard');
-      const redirectPath = ROLE_REDIRECT[user.role] || ROUTES.DASHBOARD;
+      const redirectPath = ROLE_REDIRECT[user.role as RoleType] || ROUTES.DASHBOARD;
       navigate(redirectPath);
     }
   }, [isAuthenticated, user, navigate]);
