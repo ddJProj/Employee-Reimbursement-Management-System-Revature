@@ -110,4 +110,4 @@ export function useUpgradeRequest(): UseUpgradeRequestReturn {
   return { requestUpgrade, isLoading, error, success };
 }
 
-// TODO: add support for checking existing upgrade request status?
+// TODO: support for checking existing upgrade request status?
