@@ -9,7 +9,8 @@
  */
 
 import { useState } from 'react';
-import { reimbursementApi, Reimbursement, ReimbursementType } from '../service/reimbursement.api.service';
+import { reimbursementApi} from '../service/reimbursement.api.service';
+import type { Reimbursement, ReimbursementType } from '../service/reimbursement.api.service';
 
 /**
  * form data for creating reimbursement
