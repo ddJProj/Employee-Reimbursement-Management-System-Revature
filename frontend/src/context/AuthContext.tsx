@@ -80,11 +80,12 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactElemen
       setAuthToken(storedToken);
     } else {
       console.log('AuthContext: No valid session found');
-      // Clear any invalid data
+      // clear any invalid data
       authUtils.clearAuthData();
     }
     
     setIsLoading(false);
+    console.log('AuthContext: Initialization complete');
   }, []);
 
   /**
