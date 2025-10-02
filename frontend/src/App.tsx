@@ -23,34 +23,25 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import Login from './pages/auth/Login';
 import Registration from './pages/auth/Registration';
-import Dashboard from './pages/dashboard/Dashboard';
 import { ROUTES } from './constant/routes.constant';
+import DashboardRouter from './pages/dashboard/DashboardRouter';
 
 function App(): React.ReactElement {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* public routes */}
+          /** public routes */
           <Route path={ROUTES.LOGIN} element={<Login />} />
           <Route path={ROUTES.REGISTER} element={<Registration />} />
           
-          {/* protected dashboard - handles all role-based routing */}
-          <Route 
-            path={ROUTES.DASHBOARD} 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
+          {/* all dashboard routes handled by dashboardrouter */}
+          <Route path="/dashboard/*" element={
+            <ProtectedRoute>
+              <DashboardRouter />
+            </ProtectedRoute>
+          } />
           
-          {/* dashboard handles these paths internally via navigate() */}
-          <Route path={ROUTES.EMPLOYEE} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path={ROUTES.MANAGER} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path={ROUTES.RESTRICTED} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          
-          {/* default redirect */}
           <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
           <Route path="*" element={<Navigate to={ROUTES.LOGIN} replace />} />
         </Routes>
