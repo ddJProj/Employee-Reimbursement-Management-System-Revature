@@ -20,6 +20,11 @@ RUN gradle clean build -x test --no-daemon
 # Runtime stage - run the app
 FROM eclipse-temurin:17-jre-alpine
 
+#jwt secrets from GH env 
+ARG JWT_SECRET
+ENV JWT_SECRET=${JWT_SECRET}
+
+
 WORKDIR /app
 
 # copy the app JAR image from build
