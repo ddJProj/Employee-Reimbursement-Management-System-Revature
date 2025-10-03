@@ -1,6 +1,0 @@
-pnpm create vite@latest frontend --template react-ts
-
-
-cd frontend
-pnpm install
-pnpm run dev

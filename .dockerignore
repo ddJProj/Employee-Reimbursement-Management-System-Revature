@@ -1,0 +1,21 @@
+# .dockerignore (in project root)
+
+# no build outputs
+**/build/
+**/.gradle/
+**/bin/
+**/target/
+
+# no IDE files
+**/.idea/
+**/.vscode/
+**/*.iml
+
+# no git
+.git/
+.gitignore
+
+# other stuff
+**/*.log
+**/.DS_Store
+**/node_modules/
