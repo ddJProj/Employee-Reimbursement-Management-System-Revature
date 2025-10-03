@@ -35,48 +35,49 @@ jobs:
           ls -lh backend-image.tar.gz
       
       - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      # ssh debug steps (resolved through security rule)
       #   run: |
-      #     mkdir -p ~/.ssh
-      #     echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-      #     chmod 600 ~/.ssh/id_rsa
-      #     ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-      
-        run: |
-            echo "Setting up SSH..."
-            echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
-            echo "EC2_USER: ${{ secrets.EC2_USER }}"
-            
-            mkdir -p ~/.ssh
-            
-            echo "Creating SSH key file..."
-            echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-            
-            # verify key file
-            echo "Key file size: $(wc -c < ~/.ssh/id_rsa) bytes"
-            echo "Key file first line: $(head -n 1 ~/.ssh/id_rsa)"
-            echo "Key file last line: $(tail -n 1 ~/.ssh/id_rsa)"
-            
-            chmod 600 ~/.ssh/id_rsa
-            
-            echo "Testing SSH key permissions..."
-            ls -la ~/.ssh/id_rsa
-            
-            echo "Adding EC2 host to known_hosts..."
-            ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts 2>&1
-            
-            echo "SSH setup complete!"
-            echo "Contents of known_hosts:"
-            cat ~/.ssh/known_hosts
-
-
-      - name: Test SSH Connection
-        run: |
-          echo "Testing SSH connection to EC2..."
-          ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful!'" 2>&1 || {
-            echo "SSH connection failed!"
-            exit 1
-          }
+      #       echo "Setting up SSH..."
+      #       echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
+      #       echo "EC2_USER: ${{ secrets.EC2_USER }}"
+      #       
+      #       mkdir -p ~/.ssh
+      #       
+      #       echo "Creating SSH key file..."
+      #       echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+      #       
+      #       # verify key file
+      #       echo "Key file size: $(wc -c < ~/.ssh/id_rsa) bytes"
+      #       echo "Key file first line: $(head -n 1 ~/.ssh/id_rsa)"
+      #       echo "Key file last line: $(tail -n 1 ~/.ssh/id_rsa)"
+      #       
+      #       chmod 600 ~/.ssh/id_rsa
+      #       
+      #       echo "Testing SSH key permissions..."
+      #       ls -la ~/.ssh/id_rsa
+      #       
+      #       echo "Adding EC2 host to known_hosts..."
+      #       ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts 2>&1
+      #       
+      #       echo "SSH setup complete!"
+      #       echo "Contents of known_hosts:"
+      #       cat ~/.ssh/known_hosts
+      #
+      #
+      # - name: Test SSH Connection
+      #   run: |
+      #     echo "Testing SSH connection to EC2..."
+      #     ssh -v -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+      #       ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo 'SSH connection successful!'" 2>&1 || {
+      #       echo "SSH connection failed!"
+      #       exit 1
+      #     }
 
       - name: Copy Docker image to EC2
         run: |
