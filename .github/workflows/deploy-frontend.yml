@@ -20,12 +20,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20' # set to version used locally
       
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 8  # or whatever version you're using locally
+          version: 9 # set to version used locally
           run_install: false
       
       - name: Get pnpm store directory
