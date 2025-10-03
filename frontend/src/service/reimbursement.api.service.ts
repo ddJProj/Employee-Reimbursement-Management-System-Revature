@@ -9,11 +9,12 @@
  * @see {@link https://www.robinwieruch.de/react-hooks-fetch-data/} - data fetching patterns
  */
 import axios, { AxiosError } from 'axios';
+import { API_BASE_URL } from '../config/api.config';
 
 /**
  * base api configuration
  */
-const API_BASE_URL = '/api';
+/** const API_BASE_URL = '/api'; */
 
 /**
  * reimbursement type - backend defines: FOOD, AIRLINE, GAS, HOTEL, SUPPLIES, OTHER
