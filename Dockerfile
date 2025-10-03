@@ -4,6 +4,10 @@ FROM gradle:8.5-jdk17-alpine AS build
 
 WORKDIR /app
 
+#jwt secrets from GH env 
+ARG JWT_SECRET
+ENV JWT_SECRET=${JWT_SECRET}
+
 # copy source/settings
 COPY settings.gradle ./
 COPY core/ ./core/
