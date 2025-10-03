@@ -1,0 +1,113 @@
+name: Deploy Backend to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'core/**'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-backend.yml'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t revp1-ers-backend:latest .
+      
+      - name: Save Docker image to file
+        run: |
+          echo "Saving image to tar.gz..."
+          docker save revp1-ers-backend:latest | gzip > backend-image.tar.gz
+          ls -lh backend-image.tar.gz
+      
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Copy Docker image to EC2
+        run: |
+          echo "Copying image to EC2..."
+          scp -i ~/.ssh/id_rsa backend-image.tar.gz \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
+      
+      - name: Deploy on EC2
+        run: |
+          echo "Deploying on EC2..."
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            # Stop old container
+            echo "Stopping old container..."
+            docker stop revp1-ers-backend 2>/dev/null || true
+            docker rm revp1-ers-backend 2>/dev/null || true
+            
+            # Load new image
+            echo "Loading new image..."
+            docker load < /tmp/backend-image.tar.gz
+            rm /tmp/backend-image.tar.gz
+            
+            # Start new container with environment variables
+            echo "Starting new container..."
+            docker run -d \
+              --name revp1-ers-backend \
+              --restart unless-stopped \
+              -p 8080:8080 \
+              -e SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}" \
+              -e SPRING_DATASOURCE_USERNAME="${{ secrets.DB_USERNAME }}" \
+              -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              revp1-ers-backend:latest
+            
+            # Wait for startup
+            echo "Waiting for startup..."
+            sleep 15
+            
+            # Check if running
+            if docker ps | grep -q revp1-ers-backend; then
+              echo "Deployment successful!"
+              docker logs revp1-ers-backend --tail 20
+            else
+              echo "Deployment failed!"
+              docker logs revp1-ers-backend
+              exit 1
+            fi
+          EOF
+      
+      - name: Verify deployment
+        run: |
+          echo "Verifying backend is responding..."
+          sleep 10
+          
+          # Try to reach the backend (any response means it's running)
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            http://${{ secrets.EC2_HOST }}:8080/api/auth/login || echo "000")
+          
+          if [ "$response" = "200" ] || [ "$response" = "401" ] || [ "$response" = "403" ]; then
+            echo "Backend is responding (HTTP $response)"
+          else
+            echo "Backend returned HTTP $response - check logs"
+          fi
+      
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/id_rsa backend-image.tar.gz
+      
+      - name: Deployment summary
+        run: |
+          echo "=========================================="
+          echo "Backend Deployment Complete!"
+          echo "=========================================="
+          echo "Backend URL: http://${{ secrets.EC2_HOST }}:8080"
+          echo "API Endpoint: http://${{ secrets.EC2_HOST }}:8080/api"
+          echo "=========================================="
