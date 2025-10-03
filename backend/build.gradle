@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot'
-	id 'io.spring.dependency-management'
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.4'
 }
 
 dependencies {
@@ -14,6 +14,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'  // added for development
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
