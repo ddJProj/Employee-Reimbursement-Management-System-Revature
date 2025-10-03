@@ -10,11 +10,12 @@
 
 import axios, { AxiosError } from 'axios';
 import type { UserAccount, RoleType } from '../constant/types.constant';
+import { API_BASE_URL } from '../config/api.config';
 
 /**
  * base api configuration
  */
-const API_BASE_URL = '/api';
+/** const API_BASE_URL = '/api'; */
 
 /**
  * request payload for account upgrade
