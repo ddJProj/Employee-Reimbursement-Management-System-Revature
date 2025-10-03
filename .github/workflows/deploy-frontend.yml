@@ -1,0 +1,85 @@
+name: Deploy Frontend to S3
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8  # or whatever version you're using locally
+          run_install: false
+      
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build frontend
+        working-directory: frontend
+        run: pnpm run build
+        env:
+          NODE_ENV: production
+          VITE_API_BASE_URL: http://${{ secrets.EC2_HOST }}:8080
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      
+      - name: Deploy to S3
+        run: |
+          echo "Deploying to S3 bucket: ${{ secrets.S3_BUCKET_NAME }}"
+          
+          # Sync all files except index.html with long cache
+          aws s3 sync frontend/dist/ s3://${{ secrets.S3_BUCKET_NAME }}/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          
+          # Upload index.html with no-cache
+          aws s3 cp frontend/dist/index.html \
+            s3://${{ secrets.S3_BUCKET_NAME }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+      
+      - name: Deployment summary
+        run: |
+          echo "=========================================="
+          echo "Frontend Deployment Complete!"
+          echo "=========================================="
+          echo "S3 Bucket: ${{ secrets.S3_BUCKET_NAME }}"
+          echo "Website URL: http://${{ secrets.S3_BUCKET_NAME }}.s3-website.${{ secrets.AWS_REGION }}.amazonaws.com"
+          echo "API URL configured: http://${{ secrets.EC2_HOST }}:8080"
+          echo "=========================================="
