@@ -12,6 +12,7 @@ on:
       - '.github/workflows/deploy-backend.yml'
   workflow_dispatch:  # Manual trigger
 
+
 jobs:
   deploy-backend:
     runs-on: ubuntu-latest
@@ -23,12 +24,14 @@ jobs:
       - name: Build Docker image
         run: |
           echo "Building Docker image..."
-          docker build -t revp1-ers-backend:latest .
+          docker build \
+            --build-arg JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -t employee-reimbursement:latest .
       
       - name: Save Docker image to file
         run: |
           echo "Saving image to tar.gz..."
-          docker save revp1-ers-backend:latest | gzip > backend-image.tar.gz
+          docker save employee-reimbursement:latest | gzip > backend-image.tar.gz
           ls -lh backend-image.tar.gz
       
       - name: Setup SSH
@@ -50,8 +53,8 @@ jobs:
           ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             # Stop old container
             echo "Stopping old container..."
-            docker stop revp1-ers-backend 2>/dev/null || true
-            docker rm revp1-ers-backend 2>/dev/null || true
+            docker stop employee-reimbursement 2>/dev/null || true
+            docker rm employee-reimbursement 2>/dev/null || true
             
             # Load new image
             echo "Loading new image..."
@@ -61,25 +64,26 @@ jobs:
             # Start new container with environment variables
             echo "Starting new container..."
             docker run -d \
-              --name revp1-ers-backend \
+              --name employee-reimbursement \
               --restart unless-stopped \
               -p 8080:8080 \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}" \
               -e SPRING_DATASOURCE_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" \
-              revp1-ers-backend:latest
+              employee-reimbursement:latest
             
             # Wait for startup
             echo "Waiting for startup..."
             sleep 15
             
             # Check if running
-            if docker ps | grep -q revp1-ers-backend; then
+            if docker ps | grep -q employee-reimbursement; then
               echo "Deployment successful!"
-              docker logs revp1-ers-backend --tail 20
+              docker logs employee-reimbursement --tail 20
             else
               echo "Deployment failed!"
-              docker logs revp1-ers-backend
+              docker logs employee-reimbursement
               exit 1
             fi
           EOF
