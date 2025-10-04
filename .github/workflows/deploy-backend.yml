@@ -84,7 +84,9 @@ jobs:
           echo "Copying image to EC2..."
           scp -i ~/.ssh/id_rsa backend-image.tar.gz \
             ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
-      
+ 
+
+        #deploy using mysql
       - name: Deploy on EC2
         run: |
           echo "Deploying on EC2..."
@@ -99,7 +101,7 @@ jobs:
             docker load < /tmp/backend-image.tar.gz
             rm /tmp/backend-image.tar.gz
             
-            # Start new container with environment variables
+            # Start new container with MySQL configuration
             echo "Starting new container..."
             docker run -d \
               --name employee-reimbursement \
@@ -107,8 +109,15 @@ jobs:
               -p 8080:8080 \
               -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
               -e SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}" \
+              -e SPRING_DATASOURCE_DRIVER="com.mysql.cj.jdbc.Driver" \
               -e SPRING_DATASOURCE_USERNAME="${{ secrets.DB_USERNAME }}" \
               -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              -e SPRING_JPA_DIALECT="org.hibernate.dialect.MySQL8Dialect" \
+              -e SPRING_JPA_DDL_AUTO="update" \
+              -e SPRING_JPA_SHOW_SQL="false" \
+              -e H2_CONSOLE_ENABLED="false" \
+              -e LOG_LEVEL="INFO" \
+              -e SECURITY_LOG_LEVEL="WARN" \
               employee-reimbursement:latest
             
             # Wait for startup
@@ -125,6 +134,47 @@ jobs:
               exit 1
             fi
           EOF
+
+      # - name: Deploy on EC2
+      #   run: |
+      #     echo "Deploying on EC2..."
+      #     ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+      #       # Stop old container
+      #       echo "Stopping old container..."
+      #       docker stop employee-reimbursement 2>/dev/null || true
+      #       docker rm employee-reimbursement 2>/dev/null || true
+      #       
+      #       # Load new image
+      #       echo "Loading new image..."
+      #       docker load < /tmp/backend-image.tar.gz
+      #       rm /tmp/backend-image.tar.gz
+      #       
+      #       # Start new container with environment variables
+      #       echo "Starting new container..."
+      #       docker run -d \
+      #         --name employee-reimbursement \
+      #         --restart unless-stopped \
+      #         -p 8080:8080 \
+      #         -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+      #         -e SPRING_DATASOURCE_URL="jdbc:mysql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}" \
+      #         -e SPRING_DATASOURCE_USERNAME="${{ secrets.DB_USERNAME }}" \
+      #         -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+      #         employee-reimbursement:latest
+      #       
+      #       # Wait for startup
+      #       echo "Waiting for startup..."
+      #       sleep 15
+      #       
+      #       # Check if running
+      #       if docker ps | grep -q employee-reimbursement; then
+      #         echo "Deployment successful!"
+      #         docker logs employee-reimbursement --tail 20
+      #       else
+      #         echo "Deployment failed!"
+      #         docker logs employee-reimbursement
+      #         exit 1
+      #       fi
+      #     EOF
       
       - name: Verify deployment
         run: |
