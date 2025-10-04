@@ -59,7 +59,7 @@ public class SecurityBeansConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                     .requestMatchers("/h2-console/**").permitAll() // FIXME: allow h2 console for development. remove after
                 .anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
