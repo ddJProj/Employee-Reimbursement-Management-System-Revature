@@ -50,7 +50,7 @@ jobs:
         run: pnpm run build
         env:
           NODE_ENV: production
-          VITE_API_BASE_URL: http://${{ secrets.EC2_HOST }}:8080
+          VITE_API_BASE_URL: http://${{ secrets.EC2_HOST }}:8080/api
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -81,5 +81,5 @@ jobs:
           echo "=========================================="
           echo "S3 Bucket: ${{ secrets.S3_BUCKET_NAME }}"
           echo "Website URL: http://${{ secrets.S3_BUCKET_NAME }}.s3-website.${{ secrets.AWS_REGION }}.amazonaws.com"
-          echo "API URL configured: http://${{ secrets.EC2_HOST }}:8080"
+          echo "API URL configured: http://${{ secrets.EC2_HOST }}:8080/api"
           echo "=========================================="
