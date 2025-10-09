@@ -46,24 +46,24 @@ const navigationItems: NavItem[] = [
     path: ROUTES.DASHBOARD,
     roles: [RoleType.Manager, RoleType.Employee, RoleType.Restricted]
   },
-  // manager-specific items
-  {
-    label: 'Manager Dashboard',
-    path: ROUTES.MANAGER,
-    roles: [RoleType.Manager]
-  },
-  // employee-specific items
-  {
-    label: 'Employee Dashboard',
-    path: ROUTES.EMPLOYEE,
-    roles: [RoleType.Employee]
-  },
-  // restricted-specific items
-  {
-    label: 'Restricted Dashboard',
-    path: ROUTES.RESTRICTED,
-    roles: [RoleType.Restricted]
-  }
+  // // manager-specific items
+  // {
+  //   label: 'Manager Dashboard',
+  //   path: ROUTES.MANAGER,
+  //   roles: [RoleType.Manager]
+  // },
+  // // employee-specific items
+  // {
+  //   label: 'Employee Dashboard',
+  //   path: ROUTES.EMPLOYEE,
+  //   roles: [RoleType.Employee]
+  // },
+  // // restricted-specific items
+  // {
+  //   label: 'Restricted Dashboard',
+  //   path: ROUTES.RESTRICTED,
+  //   roles: [RoleType.Restricted]
+  // }
 ];
 
 /**
