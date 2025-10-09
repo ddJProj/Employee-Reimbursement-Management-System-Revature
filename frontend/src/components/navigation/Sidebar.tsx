@@ -8,6 +8,14 @@
  * @see {@link https://blog.logrocket.com/creating-sidebar-react-tailwindcss/} - sidebar patterns
  * @see {@link https://www.w3.org/wai/aria/apg/patterns/navigation/} - navigation accessibility
  * @see {@link https://uxdesign.cc/the-sidebar-navigation-in-web-design-2ce5db531a3} - sidebar ux patterns
+ *
+ *
+ * @see {@link https://mui.com/material-ui/react-drawer/#permanent-drawer} - mui sidebar example 
+ * @see {@link } - sidebar ux patterns
+ * @see {@link } - sidebar ux patterns
+ * @see {@link } - sidebar ux patterns
+ *
+ *
  */
 
 import React from 'react';
@@ -15,7 +23,26 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { authApi } from '../../service/auth.api.service'; 
 import { ROUTES } from '../../constant/routes.constant';
-import { RoleType } from '../../constant/types.constant';
+import type { RoleType } from '../../constant/types.constant';
+
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import Toolbar from '@mui/material/Toolbar';
+import Box from '@mui/material/Box';
+import HomeIcon from '@mui/icons-material/Home';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import PeopleIcon from '@mui/icons-material/People';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+/**
+ * set width for nav drawer
+ */
+const drawerWidth = 240;
 
 /**
  * navigation item structure
@@ -25,6 +52,8 @@ interface NavItem {
   label: string;
   /** route path */
   path: string;
+  /** component icon */
+  icon: React.ReactElement;
   /** roles allowed to see this item */
   roles: RoleType[];
 }
@@ -36,26 +65,14 @@ const navigationItems: NavItem[] = [
   {
     label: 'Dashboard',
     path: ROUTES.DASHBOARD,
+    icon: <HomeIcon />,
     roles: [RoleType.Manager, RoleType.Employee, RoleType.Restricted]
-  },
-  // manager-specific items
-  {
-    label: 'Manager Dashboard',
-    path: ROUTES.MANAGER,
-    roles: [RoleType.Manager]
-  },
-  // employee-specific items
-  {
-    label: 'Employee Dashboard',
-    path: ROUTES.EMPLOYEE,
-    roles: [RoleType.Employee]
-  },
-  // restricted-specific items
-  {
-    label: 'Restricted Dashboard',
-    path: ROUTES.RESTRICTED,
-    roles: [RoleType.Restricted]
   }
+  // TODO : add home/welcome page logic
+  //
+  // TODO:: separate reimbursement logic into separate menu entry and page?
+  
+
 ];
 
 /**
@@ -67,6 +84,7 @@ const navigationItems: NavItem[] = [
 function Sidebar(): React.ReactElement {
   const { user, token, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
   
   /**
    * handles user logout
@@ -96,113 +114,139 @@ function Sidebar(): React.ReactElement {
     console.log('Logout complete, redirected to login');
   };
   
+  
+  /**
+   * filters nav items by user role
+   */
+  const getVisibleNavItems = (items: NavItem[]): NavItem[] => {
+    if (!user) return [];
+
+    return items.filter(item => item.roles.includes(user.role as RoleType));
+  };  
+
+
+
+  const visibleItems = getVisibleNavItems(navigationItems);
+
   // don't render sidebar if not authenticated
   if (!isAuthenticated || !user) {
     return <></>;
   }
-  
-  /**
-   * Filters navigation items based on user role
-   */
-  const userNavItems = navigationItems.filter(item => 
-    item.roles.includes(user.role)
-  );  
-
-
 
   return (
-    <aside style={{ 
-      width: '250px', 
-      height: '100vh', 
-      borderRight: '1px solid #ccc',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: '#f8f9fa'
-    }}>
-      {/* user info section */}
-      <div style={{ padding: '20px', borderBottom: '1px solid #ccc' }}>
-        <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 'bold' }}>
-          ERS
-        </h2>
-        <p style={{ fontSize: '14px', marginTop: '10px', marginBottom: '5px' }}>
-          {user.email}
-        </p>
-        <p style={{ 
-          fontSize: '12px', 
-          color: '#666',
-          backgroundColor: '#e9ecef',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          display: 'inline-block'
-        }}>
-          {user.role}
-        </p>
-      </div>
+    <Drawer
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: drawerWidth,
+          boxSizing: 'border-box',
+        },
+      }}
+      variant="permanent"
+      anchor="left"
+    >
+      {/* top spacing with user info */}
+      <Toolbar>
+        <Box sx={{ p: 2, width: '100%' }}>
+          <Box sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+            ERS
+          </Box>
+          <Box sx={{ fontSize: '0.875rem', color: 'text.secondary', mt: 1 }}>
+            {user.email}
+          </Box>
+          <Box 
+            sx={{ 
+              fontSize: '0.75rem',
+              color: 'text.secondary',
+              bgcolor: 'action.hover',
+              px: 1,
+              py: 0.5,
+              borderRadius: 1,
+              display: 'inline-block',
+              mt: 0.5
+            }}
+          >
+            {user.role}
+          </Box>
+        </Box>
+      </Toolbar>
       
-      {/* navigation items */}
-      <nav style={{ flex: 1, padding: '20px' }}>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {userNavItems.map((item) => (
-            <li key={item.path} style={{ marginBottom: '10px' }}>
-              <NavLink
-                to={item.path}
-                style={({ isActive }) => ({
-                  display: 'block',
-                  padding: '10px',
-                  textDecoration: 'none',
-                  color: isActive ? '#007bff' : '#333',
-                  backgroundColor: isActive ? '#e9ecef' : 'transparent',
-                  borderRadius: '4px',
-                  transition: 'all 0.2s'
-                })}
-              >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      
-      {/* logout button at bottom */}
-      <div style={{ 
-        padding: '20px', 
-        borderTop: '1px solid #ccc'
-      }}>
-        <button
-          onClick={handleLogout}
-          type="button"
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#dc3545',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}
-        >
-          Logout
-        </button>
-      </div>
-      
+      <Divider />
+
+      {/* navigation items using navlink */}
+      <List>
+        {visibleItems.map((item) => (
+          <ListItem key={item.path} disablePadding>
+            <NavLink
+              to={item.path}
+              style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}
+            >
+              {({ isActive }) => (
+                <ListItemButton
+                  selected={isActive}
+                  sx={{
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.light',
+                      '&:hover': {
+                        bgcolor: 'primary.light',
+                      },
+                    },
+                  }}
+                >
+                  <ListItemIcon 
+                    sx={{ 
+                      color: isActive ? 'primary.main' : 'inherit' 
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              )}
+            </NavLink>
+          </ListItem>
+        ))}
+      </List>
+
+      <Divider />
+
+      {/* logout button - push to bottom */}
+      <Box sx={{ mt: 'auto' }}>
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton onClick={handleLogout}>
+              <ListItemIcon>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText primary="Logout" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Box>
+
       {/* development info */}
       {process.env.NODE_ENV === 'development' && (
-        <div style={{ 
-          padding: '10px 20px', 
-          fontSize: '10px',
-          color: '#999',
-          borderTop: '1px solid #ccc'
-        }}>
-          <p style={{ margin: 0 }}>Permissions: {user.permissions.length}</p>
-        </div>
+        <Box 
+          sx={{ 
+            p: 1.5,
+            fontSize: '0.625rem',
+            color: 'text.disabled',
+            borderTop: 1,
+            borderColor: 'divider'
+          }}
+        >
+          <Box sx={{ m: 0 }}>Permissions: {user.permissions.length}</Box>
+        </Box>
       )}
-    </aside>
+    </Drawer>
+
   );
 }
 
 export default Sidebar; 
 
 
-
+  // TODO : ADD TO NAVITEMS:
+  //  add home/welcome page logic
+  //  separate reimbursement logic into separate menu entry and page?
