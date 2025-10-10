@@ -4,7 +4,7 @@
 
 A fullstack web application for managing employee reimbursement requests. Employees can submit reimbursement tickets for business expenses, while managers can review and approve or deny these requests.
 
-**Live Application:** http://project1-frontend-bucket-ddj.s3-website.us-east-2.amazonaws.com
+**Live Application:** http://revp1-ers-frontend.s3-website.us-east-2.amazonaws.com/
 
 ## Architecture
 
