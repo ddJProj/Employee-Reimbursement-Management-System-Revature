@@ -149,16 +149,13 @@ The frontend will be available at `http://localhost:5173`
 
 ### Test Accounts
 
-For development and testing:
+For development and testing, create an account, or use the Manager account to process requests:
 
 ```
 Manager Account:
 Email: manager@test.com
-Password: Password123!
+Password: Test123!
 
-Employee Account:
-Email: employee@test.com
-Password: Password123!
 ```
 
 ## API Endpoints
