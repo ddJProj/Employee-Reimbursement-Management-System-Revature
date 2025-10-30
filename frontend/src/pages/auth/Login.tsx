@@ -13,6 +13,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  Link as MuiLink
+} from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import { useLogin } from '../../hooks/useLogin';
 import { ROUTES, ROLE_REDIRECT } from '../../constant/routes.constant';
@@ -128,66 +138,104 @@ function Login(): React.ReactElement {
   const displayError = validationError || error;
 
   return (
-    <div>
-      <h2>Login</h2>
-      
-      {/* display error message */}
-      {displayError && (
-        <div role="alert" style={{ color: 'red', marginBottom: '10px' }}>
-          {displayError}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="Enter your email"
-            required
-            disabled={isLoading}
-            autoComplete="email"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={handlePasswordChange}
-            placeholder="Enter your password"
-            required
-            disabled={isLoading}
-            autoComplete="current-password"
-          />
-        </div>
-        
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-      
-      <p>
-        Don't have an account? <Link to={ROUTES.REGISTER}>Register here</Link>
-      </p>
-      
-      {/* development helpers */}
-      {process.env.NODE_ENV === 'development' && (
-        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
-          <p>Test Accounts:</p>
-          <p>Manager: manager@test.com</p>
-          <p>Employee: employee@test.com</p>
-          <p>Password: Test123!</p>
-        </div>
-      )}
-    </div>
+    <Box
+      className="flex items-center justify-center min-h-screen bg-gray-50"
+      sx={{ p: 2 }}
+    >
+      <Card
+        sx={{
+          maxWidth: 450,
+          width: '100%',
+          boxShadow: 3
+        }}
+      >
+        <CardContent sx={{ p: 4 }}>
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            align="center"
+            sx={{ mb: 3, fontWeight: 600 }}
+          >
+            Login
+          </Typography>
+
+          {/* display error message */}
+          {displayError && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {displayError}
+            </Alert>
+          )}
+
+          <Box component="form" onSubmit={handleSubmit} noValidate>
+            <TextField
+              fullWidth
+              id="email"
+              name="email"
+              label="Email"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Enter your email"
+              required
+              disabled={isLoading}
+              autoComplete="email"
+              margin="normal"
+              variant="outlined"
+            />
+
+            <TextField
+              fullWidth
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Enter your password"
+              required
+              disabled={isLoading}
+              autoComplete="current-password"
+              margin="normal"
+              variant="outlined"
+            />
+
+            <Button
+              fullWidth
+              type="submit"
+              variant="contained"
+              size="large"
+              disabled={isLoading}
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
+            >
+              {isLoading ? 'Logging in...' : 'Login'}
+            </Button>
+          </Box>
+
+          <Typography align="center" variant="body2" sx={{ mt: 2 }}>
+            Don't have an account?{' '}
+            <MuiLink component={Link} to={ROUTES.REGISTER} underline="hover">
+              Register here
+            </MuiLink>
+          </Typography>
+
+          {/* development helpers */}
+          {process.env.NODE_ENV === 'development' && (
+            <Alert severity="info" sx={{ mt: 3 }}>
+              <Typography variant="caption" component="div" sx={{ fontWeight: 600, mb: 0.5 }}>
+                Test Accounts:
+              </Typography>
+              <Typography variant="caption" component="div">
+                Manager: manager@test.com
+              </Typography>
+              <Typography variant="caption" component="div">
+                Password: Test123!
+              </Typography>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
 
