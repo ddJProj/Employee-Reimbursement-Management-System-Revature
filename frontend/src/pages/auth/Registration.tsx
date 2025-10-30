@@ -12,6 +12,20 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  Collapse,
+  Link as MuiLink,
+  List,
+  ListItem,
+  ListItemText
+} from '@mui/material';
 import { useAuth } from '../../hooks/useAuth';
 import { authApi } from '../../service/auth.api.service';
 import { ROUTES, ROLE_REDIRECT } from '../../constant/routes.constant';
@@ -214,40 +228,58 @@ function Registration(): React.ReactElement {
   };
 
   return (
-    
+    <Box
+      className="flex items-center justify-center min-h-screen bg-gray-50"
+      sx={{ p: 2 }}
+    >
+      <Card
+        sx={{
+          maxWidth: 500,
+          width: '100%',
+          boxShadow: 3
+        }}
+      >
+        <CardContent sx={{ p: 4 }}>
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            align="center"
+            sx={{ mb: 3, fontWeight: 600 }}
+          >
+            Create Account
+          </Typography>
 
-      <div>
-        <h2>Create Account</h2>
-        
-        {/* display error message */}
-        {error && (
-          <div role="alert" style={{ color: 'red' }}>
-            {error}
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email">Email:</label>
-            <input
-              type="email"
+          {/* display error message */}
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
+
+          <Box component="form" onSubmit={handleSubmit} noValidate>
+            <TextField
+              fullWidth
               id="email"
               name="email"
+              label="Email"
+              type="email"
               value={email}
               onChange={handleEmailChange}
               placeholder="Enter your email"
               required
               disabled={isLoading}
               autoComplete="email"
+              margin="normal"
+              variant="outlined"
             />
-          </div>
-          
-          <div>
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
+
+            <TextField
+              fullWidth
               id="password"
               name="password"
+              label="Password"
+              type="password"
               value={password}
               onChange={handlePasswordChange}
               onFocus={handlePasswordFocus}
@@ -256,53 +288,98 @@ function Registration(): React.ReactElement {
               required
               disabled={isLoading}
               autoComplete="new-password"
+              margin="normal"
+              variant="outlined"
             />
-            
+
             {/* password requirements hint */}
-            {showPasswordRequirements && (
-              <div style={{ fontSize: '12px', marginTop: '5px', color: '#666' }}>
-                <p>Password must contain:</p>
-                <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
-                  <li>At least 8 characters</li>
-                  <li>One uppercase letter</li>
-                  <li>One lowercase letter</li>
-                  <li>One number</li>
-                  <li>One special character (@#$%^&+=!)</li>
-                </ul>
-              </div>
-            )}
-          </div>
-          
-          <div>
-            <label htmlFor="confirmPassword">Confirm Password:</label>
-            <input
-              type="password"
+            <Collapse in={showPasswordRequirements}>
+              <Alert severity="info" sx={{ mt: 1, mb: 1 }}>
+                <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
+                  Password must contain:
+                </Typography>
+                <List dense sx={{ py: 0 }}>
+                  <ListItem sx={{ py: 0, px: 0 }}>
+                    <ListItemText
+                      primary="At least 8 characters"
+                      primaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ py: 0, px: 0 }}>
+                    <ListItemText
+                      primary="One uppercase letter"
+                      primaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ py: 0, px: 0 }}>
+                    <ListItemText
+                      primary="One lowercase letter"
+                      primaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ py: 0, px: 0 }}>
+                    <ListItemText
+                      primary="One number"
+                      primaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
+                  <ListItem sx={{ py: 0, px: 0 }}>
+                    <ListItemText
+                      primary="One special character (@#$%^&+=!)"
+                      primaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
+                </List>
+              </Alert>
+            </Collapse>
+
+            <TextField
+              fullWidth
               id="confirmPassword"
               name="confirmPassword"
+              label="Confirm Password"
+              type="password"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               placeholder="Confirm your password"
               required
               disabled={isLoading}
               autoComplete="new-password"
+              margin="normal"
+              variant="outlined"
             />
-          </div>
-          
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? 'Creating Account...' : 'Register'}
-          </button>
-        </form>
-        
-        <p>
-          Already have an account? <Link to={ROUTES.LOGIN}>Login here</Link>
-        </p>
-        
-        {/* information about default role */}
-        <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
-          <p>Note: New accounts start with restricted access.</p>
-          <p>Request employee access after registration.</p>
-        </div>
-      </div>
+
+            <Button
+              fullWidth
+              type="submit"
+              variant="contained"
+              size="large"
+              disabled={isLoading}
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
+            >
+              {isLoading ? 'Creating Account...' : 'Register'}
+            </Button>
+          </Box>
+
+          <Typography align="center" variant="body2" sx={{ mt: 2 }}>
+            Already have an account?{' '}
+            <MuiLink component={Link} to={ROUTES.LOGIN} underline="hover">
+              Login here
+            </MuiLink>
+          </Typography>
+
+          {/* information about default role */}
+          <Alert severity="info" sx={{ mt: 3 }}>
+            <Typography variant="caption" component="div">
+              <strong>Note:</strong> New accounts start with restricted access.
+            </Typography>
+            <Typography variant="caption" component="div">
+              Request employee access after registration.
+            </Typography>
+          </Alert>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
 
