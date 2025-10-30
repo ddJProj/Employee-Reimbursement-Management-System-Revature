@@ -14,20 +14,24 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      # checkout action to check out repo for use in WF
       - name: Checkout code
         uses: actions/checkout@v4
       
+      # node setup action
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20' # set to version used locally
       
+      # pnpm setup action
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 10 # set to version used locally
           run_install: false
       
+
       - name: Get pnpm store directory
         shell: bash
         run: |
