@@ -20,6 +20,7 @@ public class ReimbursementMapper {
                 .id(entity.getId())
                 .userId(entity.getUserId())
                 .description(entity.getDescription())
+                .amount(entity.getAmount())
                 .type(entity.getType())
                 .status(entity.getStatus())
                 .build();
@@ -35,6 +36,7 @@ public class ReimbursementMapper {
 
         Reimbursement entity = new Reimbursement();
         entity.setDescription(dto.getDescription());
+        entity.setAmount(dto.getAmount());
         entity.setType(dto.getType());
         // set to PENDING by default in constructor
         // userId set by service
@@ -51,6 +53,7 @@ public class ReimbursementMapper {
         }
 
         entity.setDescription(dto.getDescription());
+        entity.setAmount(dto.getAmount());
         entity.setType(dto.getType());
         //
     }
