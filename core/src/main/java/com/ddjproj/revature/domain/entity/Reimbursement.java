@@ -22,6 +22,9 @@ public class Reimbursement {
     @Column(name = "user_id", nullable = false)
     private Long userId;  // ID of UserAccount who created
 
+    @Column(name = "amount", nullable = false)
+    private Long amount;  // reimbursement amount
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
