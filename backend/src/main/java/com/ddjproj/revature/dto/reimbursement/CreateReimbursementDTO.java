@@ -26,4 +26,9 @@ public class CreateReimbursementDTO {
     @NotNull(message = "Reimbursement type is required")
     @JsonProperty("type")
     private ReimbursementType type;
+
+    @NotNull(message = "Reimbursement amount is required")
+    @JsonProperty("amount")
+    private Long amount;
+
 }
