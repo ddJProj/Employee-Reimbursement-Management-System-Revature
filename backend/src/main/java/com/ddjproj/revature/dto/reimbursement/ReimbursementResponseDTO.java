@@ -26,6 +26,9 @@ public class ReimbursementResponseDTO {
     @JsonProperty("description")
     private String description;
 
+    @JsonProperty("amount")
+    private Long amount;
+
     @JsonProperty("type")
     private ReimbursementType type;
 
