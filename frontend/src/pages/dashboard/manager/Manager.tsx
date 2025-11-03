@@ -260,8 +260,13 @@ function ManagerDashboard(): React.ReactElement {
                     </div>
 
                     {/* description */}
-                    <p style={{ marginBottom: '15px', color: '#333' }}>
+                    <p style={{ marginBottom: '10px', color: '#333' }}>
                       {reimbursement.description}
+                    </p>
+
+                    {/* amount */}
+                    <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#28a745', marginBottom: '15px' }}>
+                      Amount: ${reimbursement.amount.toFixed(2)}
                     </p>
 
                     {/* footer with actions */}
@@ -351,6 +356,9 @@ function ManagerDashboard(): React.ReactElement {
                 </p>
                 <p style={{ marginBottom: '5px' }}>
                   <strong>Type:</strong> {selectedReimbursement.type}
+                </p>
+                <p style={{ marginBottom: '5px' }}>
+                  <strong>Amount:</strong> <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#28a745' }}>${selectedReimbursement.amount.toFixed(2)}</span>
                 </p>
                 <p style={{ marginBottom: '5px' }}>
                   <strong>Description:</strong> {selectedReimbursement.description}
