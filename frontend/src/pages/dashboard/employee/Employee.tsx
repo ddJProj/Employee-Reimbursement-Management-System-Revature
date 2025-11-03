@@ -45,6 +45,7 @@ function EmployeeDashboard(): React.ReactElement {
   // form state
   const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
   const [description, setDescription] = useState<string>('');
+  const [amount, setAmount] = useState<number | ''>('');  // Empty initially for better UX
   const [type, setType] = useState<ReimbursementType>('OTHER');
 
   /**
@@ -55,17 +56,19 @@ function EmployeeDashboard(): React.ReactElement {
    */
   const handleCreateSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    
+
     const data: CreateReimbursementData = {
       description,
+      amount: typeof amount === 'number' ? amount : Number(amount),
       type
     };
-    
+
     const result = await createReimbursement(data);
-    
+
     if (result) {
       // success - clear form and refresh list
       setDescription('');
+      setAmount('');
       setType('OTHER');
       setShowCreateForm(false);
       await refresh();
@@ -79,6 +82,7 @@ function EmployeeDashboard(): React.ReactElement {
    */
   const handleCancelCreate = (): void => {
     setDescription('');
+    setAmount('');
     setType('OTHER');
     setShowCreateForm(false);
     resetCreate();
@@ -237,6 +241,32 @@ function EmployeeDashboard(): React.ReactElement {
                 />
               </div>
 
+
+              <div style={{ marginBottom: '15px' }}>
+                <label htmlFor="amount" style={{ display: 'block', marginBottom: '5px' }}>
+                  Amount ($ amount to be reimbursed):
+                </label>
+                <input
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
+                  min="0"
+                  step="0.01"
+                  required
+                  disabled={isCreating}
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px'
+                  }}
+                  placeholder="Enter amount (e.g., 50.00)"
+                />
+              </div>
+
+
+
               <div style={{ marginBottom: '15px' }}>
                 <label htmlFor="type" style={{ display: 'block', marginBottom: '5px' }}>
                   Type:
@@ -379,6 +409,10 @@ function EmployeeDashboard(): React.ReactElement {
 
                     <p style={{ marginBottom: '10px', color: '#333' }}>
                       {reimbursement.description}
+                    </p>
+
+                    <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#28a745', marginBottom: '10px' }}>
+                      Amount: ${reimbursement.amount.toFixed(2)}
                     </p>
 
                     <p style={{ fontSize: '14px', color: '#666' }}>
