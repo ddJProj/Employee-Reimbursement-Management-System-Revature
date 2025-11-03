@@ -36,6 +36,7 @@ export interface Reimbursement {
   userId: number;
   userEmail: string;
   description: string;
+  amount: number;
   type: ReimbursementType;
   status: ReimbursementStatus;
 }
@@ -46,6 +47,7 @@ export interface Reimbursement {
  */
 interface CreateReimbursementRequest {
   description: string;
+  amount: number;
   type: ReimbursementType;
 }
 
