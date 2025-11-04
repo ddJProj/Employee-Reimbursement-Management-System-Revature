@@ -17,6 +17,7 @@ import type { Reimbursement, ReimbursementType } from '../service/reimbursement.
  */
 export interface CreateReimbursementData {
   description: string;
+  amount: number;
   type: ReimbursementType;
 }
 
@@ -71,6 +72,10 @@ export function useCreateReimbursement(): UseCreateReimbursementReturn {
       setError('Description must be at least 10 characters');
       return null;
     }
+    if (data.amount === undefined || data.amount === null || data.amount < 0) {
+      setError('Please provide a valid reimbursement amount (must be positive)');
+      return null;
+    }
 
     if (!data.type) {
       setError('Please select a reimbursement type');
@@ -86,6 +91,7 @@ export function useCreateReimbursement(): UseCreateReimbursementReturn {
       
       const reimbursement = await reimbursementApi.create({
         description: data.description.trim(),
+        amount: data.amount,
         type: data.type
       });
       
